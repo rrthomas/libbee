@@ -1,15 +1,14 @@
-# configure.ac for Bee
+# configure.ac for libbee
 # Process this file with autoconf to produce a configure script
 #
-# (c) Reuben Thomas 2011-2020
+# (c) Reuben Thomas 2011-2022
 #
-# The package is distributed under the GNU Public License version 3, or,
-# at your option, any later version.
+# The package is distributed under the MIT/X11 License.
 #
 # THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 # RISK.
 
-AC_INIT(Bee, 1.0, rrt@sc3d.org)
+AC_INIT(libbee, 1.0, rrt@sc3d.org)
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
@@ -18,22 +17,9 @@ AC_PROG_CC_C99
 gl_EARLY
 AM_PROG_AR
 LT_INIT
-AC_PATH_PROG(LATEXMK, latexmk, true)
-AM_CONDITIONAL([HAVE_LATEXMK], [test "$ac_cv_path_LATEXMK" != "true"])
-
-# help2man
-# Set a value even if not found, so that an invocation via build-aux/missing works
-AC_PATH_PROG([HELP2MAN], [help2man], [help2man])
 
 # Optimization
 AX_CC_MAXOPT
-AX_GCC_BUILTIN(__builtin_expect)
-if test "$ax_cv_have___builtin_expect" = yes; then
-  HAVE___BUILTIN_EXPECT=1
-else
-  HAVE___BUILTIN_EXPECT=0
-fi
-AC_SUBST([HAVE___BUILTIN_EXPECT])
 
 # Extra warnings with GCC
 AC_ARG_ENABLE([gcc-warnings],
@@ -73,10 +59,8 @@ gl_INIT
 
 # Check features
 AC_C_BIGENDIAN
-AC_CHECK_SIZEOF([intptr_t]) # word_bytes
+AC_CHECK_SIZEOF([intptr_t])
 SIZEOF_INTPTR_T=$ac_cv_sizeof_intptr_t
-AS_IF([test "$SIZEOF_INTPTR_T" != 4 -a "$SIZEOF_INTPTR_T" != 8],
-   AC_MSG_ERROR([sizeof(intptr_t) must be 4 or 8!]))
 AC_SUBST([SIZEOF_INTPTR_T])
 AX_C_ARITHMETIC_RSHIFT
 
@@ -84,10 +68,7 @@ AX_C_ARITHMETIC_RSHIFT
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([
         Makefile
-        lib/Makefile
         src/Makefile
-        src/private.h
-        src/include/bee/bee.h
         tests/Makefile
 ])
 AC_OUTPUT

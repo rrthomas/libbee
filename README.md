@@ -1,19 +1,14 @@
-# Bee
+# libbee
 
 by Reuben Thomas <rrt@sc3d.org>  
-https://github.com/rrthomas/bee  
+https://github.com/rrthomas/libbee  
 
-Bee is a simple virtual machine designed for the Forth language. It uses
-word-based threaded code. It has been implemented in C (for POSIX systems).
-All memory references are bounds checked. An I/O library is implemented.
+libbee is a C library of functions for operations normally only available in
+the language, such as integer arithmetic and bitwise operations.
 
-Bee’s small instruction set is easy to implement, yet also easy to use to
-write a naive Forth compiler with reasonable performance.
+It is written in plain ISO C99.
 
-This package comprises an implementation in ISO C99 using POSIX APIs.
-
-The package is distributed under the GNU Public License version 3, or,
-at your option, any later version.
+The package is distributed under the MIT/X11 license.
 
 THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 RISK.
@@ -21,20 +16,17 @@ RISK.
 
 ## Installation and compatibility
 
-Bee should work on any POSIX-1.2001-compatible system. Bee has been tested
-on x86_64 GNU/Linux with GNU C.
+Bee should compile on any POSIX-1.2001-compatible system, and the main
+source code `lib.c` on any ISO C99 system.
 
 Reports on compatibility are welcomed.
 
 
 ### Building from a release tarball
 
-Perl and help2man are required to build from source. For building from git,
-see below.
-
 To build from a release tarball, run
 
-`./configure && make && make check`
+`./configure && make check`
 
 
 ### Building from git
@@ -46,36 +38,15 @@ third-party `bootstrap` module; these are installed automatically.
 To build from a Git repository, first run
 
 ```
-git submodule update --init --recursive
 ./bootstrap
 ```
 
 Then see "Building from source" above.
 
 
-## Use
-
-Run `bee` (see `bee --help` for documentation).
-
-
 ## Documentation
 
 Sorry, there’s only the source code at present.
-
-
-## pForth
-
-[pForth](https://github.com/rrthomas/pforth) is an ANSI Forth compiler that
-runs on Bee.
-
-
-## Running Bee object files
-
-The C implementation of Bee allows a hash-bang line to be prepended to an object file, so that they can be run directly. A suggested line is:
-
-```
-#!/usr/bin/env bee
-```
 
 
 ## Bugs and comments

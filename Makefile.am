@@ -2,13 +2,12 @@
 #
 # (c) Reuben Thomas 2011-2018
 #
-# The package is distributed under the GNU Public License version 3, or,
-# at your option, any later version.
+# The package is distributed under the MIT/X11 License.
 #
 # THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 # RISK.
 
-SUBDIRS = lib src tests
+SUBDIRS = src tests
 
 ACLOCAL_AMFLAGS = -I m4
 

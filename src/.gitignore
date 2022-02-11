@@ -2,8 +2,3 @@
 /.libs
 *.lo
 /libbee.la
-/bee
-/bee.exe
-/bee.1
-/include/bee/bee.h
-/private.h

@@ -1,10 +1,9 @@
 // Test the comparison operators. We only test simple cases here, assuming
 // that the C compiler's comparison routines will work for other cases.
 //
-// (c) Reuben Thomas 1994-2020
+// (c) Reuben Thomas 1994-2022
 //
-// The package is distributed under the GNU Public License version 3, or,
-// at your option, any later version.
+// The package is distributed under the MIT/X11 License.
 //
 // THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 // RISK.
@@ -12,59 +11,46 @@
 #include "tests.h"
 
 
-bee_word_t correct[] = { 0, 1, 0, 1, 1, 0, 0, 1, 0, 0 };
+intptr_t pairs1_left[] = { -4, 2, 1, 3 };
+intptr_t pairs1_right[] = { 3, 2, 3, 1 };
 
+intptr_t pairs2_left[] = { 1, 237 };
+intptr_t pairs2_right[] = { -1, 237 };
 
-static void stack1(void)
+intptr_t correct_lt[] = { 1, 0, 1, 0 };
+intptr_t correct_eq[] = { 0, 1 };
+intptr_t correct_ult[] = { 0, 0, 1, 0 };
+
+static void comp_test(size_t pairs, intptr_t (*fn)(intptr_t, intptr_t),
+                 intptr_t pairs_left[], intptr_t pairs_right[],
+                 intptr_t correct[])
 {
-    bee_dp = 0;	// empty the stack
-
-    bee_d0[bee_dp++] = -4; bee_d0[bee_dp++] = 3;
-    bee_d0[bee_dp++] = 2; bee_d0[bee_dp++] = 2;
-    bee_d0[bee_dp++] = 1; bee_d0[bee_dp++] = 3;
-    bee_d0[bee_dp++] = 3; bee_d0[bee_dp++] = 1;
-}
-
-static void stack2(void)
-{
-    bee_dp = 0;	// empty the stack
-
-    bee_d0[bee_dp++] = 1; bee_d0[bee_dp++] = -1;
-    bee_d0[bee_dp++] = 237; bee_d0[bee_dp++] = 237;
-}
-
-static void step(unsigned start, unsigned end)
-{
-    if (end > start)
-        for (unsigned i = start; i < end; i++) {
-            printf("Instruction = %s\n", disass(*bee_pc, bee_pc));
-            assert(single_step() == BEE_ERROR_BREAK);
-            show_data_stack();
-            printf("Result: %zd; correct result: %zd\n\n", bee_d0[bee_dp - 1], correct[i]);
-            if (correct[i] != bee_d0[bee_dp - 1]) {
-                printf("Error in comparison tests: pc = %p\n", bee_pc);
-                exit(1);
-            }
-            bee_dp--;	// drop result of comparison
+    for (size_t i = 0; i < pairs; i++) {
+        intptr_t res = fn(pairs_left[i], pairs_right[i]);
+        printf("Operands: %zd, %zd; Result: %zd; correct result: %zd\n",
+               pairs_left[i], pairs_right[i],
+               res, correct[i]);
+        if (correct[i] != res) {
+            printf("Error in comparison test %zu\n", i);
+            exit(1);
         }
+    }
 }
 
 int main(void)
 {
-    size_t size = 256;
-    bee_init_defaults((bee_word_t *)calloc(size, BEE_WORD_BYTES), size);
-
-    ass_goto(bee_m0);
-    ass(BEE_INSN_LT); ass(BEE_INSN_LT); ass(BEE_INSN_LT); ass(BEE_INSN_LT);
-    ass(BEE_INSN_EQ); ass(BEE_INSN_EQ);
-    ass(BEE_INSN_ULT); ass(BEE_INSN_ULT); ass(BEE_INSN_ULT); ass(BEE_INSN_ULT);
-
-    stack1();       // set up the stack with four standard pairs to compare
-    step(0, 4);     // do the < tests
-    stack2();       // set up the stack with two standard pairs to compare
-    step(4, 6);     // do the = tests
-    stack1();       // set up the stack with four standard pairs to compare
-    step(6, 10);    // do the U< tests
+    printf("bee_lt tests\n");
+    comp_test(sizeof(pairs1_left) / sizeof(pairs1_left[0]),
+              bee_lt,
+              pairs1_left, pairs1_right, correct_lt);
+    printf("bee_eq tests\n");
+    comp_test(sizeof(pairs2_left) / sizeof(pairs2_left[0]),
+              bee_eq,
+              pairs2_left, pairs2_right, correct_eq);
+    printf("bee_ult tests\n");
+    comp_test(sizeof(pairs1_left) / sizeof(pairs1_left[0]),
+              (intptr_t (*)(intptr_t, intptr_t))bee_ult,
+              pairs1_left, pairs1_right, correct_ult);
 
     printf("Comparison tests ran OK\n");
     return 0;

@@ -2,41 +2,20 @@
 #
 # (c) Reuben Thomas 2011-2022
 #
-# The package is distributed under the GNU Public License version 3, or,
-# at your option, any later version.
+# The package is distributed under the MIT/X11 License.
 #
 # THIS PROGRAM IS PROVIDED AS IS, WITH NO WARRANTY. USE IS AT THE USER’S
 # RISK.
 
-AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib -I$(srcdir)/include -I$(builddir)/include $(WARN_CFLAGS)
+AM_CPPFLAGS = $(WARN_CFLAGS)
 
 lib_LTLIBRARIES = libbee.la
-libbee_la_SOURCES = vm.c traps.h traps.c debug.c
+libbee_la_SOURCES = lib.c
 nodist_libbee_la_SOURCES = private.h
-libbee_la_LIBADD = $(top_builddir)/lib/libgnu.la
 
-bin_PROGRAMS = bee
-man_MANS = bee.1
-bee_LDADD = libbee.la $(top_builddir)/lib/libgnu.la
-bee_SOURCES = main.c gdb-stub.c cmdline.h debug.h $(include_HEADERS)
-pkginclude_HEADERS = include/bee/opcodes.h include/bee/registers.h
-nodist_pkginclude_HEADERS = include/bee/bee.h
-
-include/bee/bee.h: include/bee/bee.h.in $(top_builddir)/config.status
-	cd $(top_builddir) && $(SHELL) ./config.status src/include/bee/bee.h
-
-# The man page depends on the binary because it is built by running the binary.
-bee.1: bee$(EXEEXT)
-## Exit gracefully if bee.1 is not writeable, such as during distcheck!
-	$(AM_V_GEN)if ( touch $@.w && rm -f $@.w; ) >/dev/null 2>&1; then \
-	  $(top_srcdir)/build-aux/missing --run $(HELP2MAN) --no-info \
-		--name="Simple virtual machine" \
-		--output=$@ ./bee$(EXEEXT); \
-	fi
+nodist_pkginclude_HEADERS = libbee.h
 
 CLOC = cloc --force-lang="C",h
 
 loc:
 	$(CLOC) $(libbee_la_SOURCES) $(bee_SOURCES)
-
-DISTCLEANFILES = bee.1 $(include_HEADERS)
